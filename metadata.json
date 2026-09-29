@@ -1,0 +1,6 @@
+{
+  "name": "Apex Rivals",
+  "description": "Competitive car and motorbike racing performance metrics, real-time telemetry, replay analyzer, cross-platform multiplayer, and global leaderboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
