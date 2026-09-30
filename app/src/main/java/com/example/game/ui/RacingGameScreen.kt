@@ -28,6 +28,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
@@ -35,14 +37,14 @@ import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Videocam
+import com.example.ui.components.LowBatteryCompactBadge
+import com.example.ui.components.rememberDeviceBatteryState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -373,30 +375,40 @@ fun TopRacingHudOverlay(
         }
       }
 
-      // Camera Switcher
-      Box(
-        modifier = Modifier
-          .clip(RoundedCornerShape(6.dp))
-          .background(CarbonSurfaceVariant)
-          .border(1.dp, CarbonBorder, RoundedCornerShape(6.dp))
-          .clickable(onClick = onSwitchCamera)
-          .padding(horizontal = 8.dp, vertical = 4.dp)
-          .testTag("hud_camera_toggle")
-      ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          Icon(
-            imageVector = Icons.Default.Videocam,
-            contentDescription = "Switch Camera",
-            tint = NeonCyan,
-            modifier = Modifier.size(13.dp)
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        val deviceBatteryState = rememberDeviceBatteryState()
+        if (deviceBatteryState.isLow || deviceBatteryState.isCritical || deviceBatteryState.isCharging) {
+          LowBatteryCompactBadge(
+            batteryState = deviceBatteryState,
+            modifier = Modifier.padding(end = 6.dp)
           )
-          Spacer(modifier = Modifier.width(4.dp))
-          Text(
-            text = perspective.label,
-            fontSize = 9.5.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary
-          )
+        }
+
+        // Camera Switcher
+        Box(
+          modifier = Modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(CarbonSurfaceVariant)
+            .border(1.dp, CarbonBorder, RoundedCornerShape(6.dp))
+            .clickable(onClick = onSwitchCamera)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .testTag("hud_camera_toggle")
+        ) {
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+              imageVector = Icons.Default.Videocam,
+              contentDescription = "Switch Camera",
+              tint = NeonCyan,
+              modifier = Modifier.size(13.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+              text = perspective.label,
+              fontSize = 9.5.sp,
+              fontWeight = FontWeight.Bold,
+              color = TextPrimary
+            )
+          }
         }
       }
     }
@@ -594,7 +606,7 @@ fun InGameDrivingControls(
         contentAlignment = Alignment.Center
       ) {
         Icon(
-          imageVector = Icons.Default.KeyboardArrowLeft,
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
           contentDescription = "Steer Left",
           tint = if (isSteerLeftPressed) CarbonBlack else NeonCyan,
           modifier = Modifier.size(38.dp)
@@ -617,7 +629,7 @@ fun InGameDrivingControls(
         contentAlignment = Alignment.Center
       ) {
         Icon(
-          imageVector = Icons.Default.KeyboardArrowRight,
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
           contentDescription = "Steer Right",
           tint = if (isSteerRightPressed) CarbonBlack else NeonCyan,
           modifier = Modifier.size(38.dp)

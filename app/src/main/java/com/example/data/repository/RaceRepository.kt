@@ -1,6 +1,8 @@
 package com.example.data.repository
 
 import com.example.data.local.RaceDao
+import com.example.data.local.RacePerformanceMetric
+import com.example.data.local.RacePerformanceMetricDao
 import com.example.data.local.RaceResult
 import com.example.data.local.RaceResultDao
 import com.example.data.local.RaceSessionEntity
@@ -23,11 +25,13 @@ import kotlinx.coroutines.flow.map
 
 class RaceRepository(
   private val raceDao: RaceDao,
-  private val raceResultDao: RaceResultDao? = null
+  private val raceResultDao: RaceResultDao? = null,
+  private val racePerformanceMetricDao: RacePerformanceMetricDao? = null
 ) {
 
   val allSessions: Flow<List<RaceSessionEntity>> = raceDao.getAllSessions()
   val allRaceResults: Flow<List<RaceResult>>? = raceResultDao?.getAllResults()
+  val allPerformanceMetrics: Flow<List<RacePerformanceMetric>>? = racePerformanceMetricDao?.getAllMetrics()
 
   suspend fun saveRaceSession(entity: RaceSessionEntity): Long {
     return raceDao.insertSession(entity)
@@ -35,6 +39,10 @@ class RaceRepository(
 
   suspend fun saveRaceResult(result: RaceResult): Long {
     return raceResultDao?.insertResult(result) ?: -1L
+  }
+
+  suspend fun savePerformanceMetric(metric: RacePerformanceMetric): Long {
+    return racePerformanceMetricDao?.insertMetric(metric) ?: -1L
   }
 
   fun getResultsForTrack(trackName: String): Flow<List<RaceResult>>? {

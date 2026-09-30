@@ -6,13 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [RaceSessionEntity::class, RaceResult::class, PerformanceMetrics::class], version = 7, exportSchema = false)
+@Database(
+  entities = [RaceSessionEntity::class, RaceResult::class, PerformanceMetrics::class, RacePerformanceMetric::class],
+  version = 8,
+  exportSchema = false
+)
 @TypeConverters(TelemetryConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
   abstract fun raceDao(): RaceDao
   abstract fun raceResultDao(): RaceResultDao
   abstract fun performanceMetricsDao(): PerformanceMetricsDao
+  abstract fun racePerformanceMetricDao(): RacePerformanceMetricDao
 
   companion object {
     @Volatile
@@ -24,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
           context.applicationContext,
           AppDatabase::class.java,
           "apex_rivals_database"
-        ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
         INSTANCE = instance
         instance
       }

@@ -1,11 +1,16 @@
 package com.example.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -103,11 +108,19 @@ fun RaceDashboard(
   lapNumber: Int = 8,
   totalLaps: Int = 25,
   allowInteractiveDemo: Boolean = true,
+  deviceBatteryLevel: Int? = null,
+  showDeviceBattery: Boolean = true,
   onSpeedUnitToggle: () -> Unit = {},
   onGearUp: () -> Unit = {},
   onGearDown: () -> Unit = {}
 ) {
   var isDemoMode by remember { mutableStateOf(false) }
+  var simulatedDeviceBattery by remember { mutableStateOf<Int?>(deviceBatteryLevel) }
+  var isBatteryBannerDismissed by remember { mutableStateOf(false) }
+
+  val deviceBatteryState = rememberDeviceBatteryState(
+    simulatedLevel = simulatedDeviceBattery
+  )
 
   // Interactive Demo State
   var demoRpm by remember { mutableIntStateOf(rpm) }
@@ -277,6 +290,47 @@ fun RaceDashboard(
               }
             }
           }
+
+          if (showDeviceBattery) {
+            Spacer(modifier = Modifier.width(6.dp))
+            // Device Battery Indicator Badge (clickable to toggle simulation / warning)
+            LowBatteryCompactBadge(
+              batteryState = deviceBatteryState,
+              onToggleDetail = {
+                isBatteryBannerDismissed = false
+                simulatedDeviceBattery = when (simulatedDeviceBattery) {
+                  null -> 14 // Simulate Low (14%)
+                  14 -> 7   // Simulate Critical (7%)
+                  7 -> 94   // Simulate Healthy (94%)
+                  else -> null // Back to live device battery
+                }
+              }
+            )
+          }
+        }
+      }
+
+      // Low Battery Race Session Notification Banner
+      AnimatedVisibility(
+        visible = showDeviceBattery && deviceBatteryState.isLow && !isBatteryBannerDismissed,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+      ) {
+        Column {
+          Spacer(modifier = Modifier.height(10.dp))
+          LowBatteryWarningBanner(
+            batteryState = deviceBatteryState,
+            onDismiss = { isBatteryBannerDismissed = true },
+            onCycleSimulation = {
+              simulatedDeviceBattery = when (simulatedDeviceBattery) {
+                null -> 14
+                14 -> 7
+                7 -> 88
+                else -> null
+              }
+              isBatteryBannerDismissed = false
+            }
+          )
         }
       }
 
@@ -431,11 +485,13 @@ fun RaceDashboard(
 
           Spacer(modifier = Modifier.height(8.dp))
 
-          // ERS Battery & Hybrid Mode
+          // ERS Battery & Hybrid Mode + Device Battery
           ErsHybridStatus(
             batteryPercent = batteryPercent,
             ersMode = ersMode,
-            fuelPercent = fuelPercent
+            fuelPercent = fuelPercent,
+            deviceBatteryPercent = deviceBatteryState.levelPercent,
+            isDeviceBatteryLow = deviceBatteryState.isLow
           )
         }
       }
@@ -724,13 +780,15 @@ private fun LapDeltaBadge(deltaSeconds: Float) {
 }
 
 /**
- * Hybrid ERS Battery Status & Fuel Gauge
+ * Hybrid ERS Battery Status & Fuel Gauge + Phone Device Battery readout
  */
 @Composable
 private fun ErsHybridStatus(
   batteryPercent: Float,
   ersMode: String,
-  fuelPercent: Float
+  fuelPercent: Float,
+  deviceBatteryPercent: Int = 100,
+  isDeviceBatteryLow: Boolean = false
 ) {
   Column(
     modifier = Modifier
@@ -789,7 +847,7 @@ private fun ErsHybridStatus(
 
     Spacer(modifier = Modifier.height(4.dp))
 
-    // Fuel Remaining
+    // Fuel Remaining & Device Battery sub-row
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceBetween
@@ -805,6 +863,28 @@ private fun ErsHybridStatus(
         fontSize = 8.5.sp,
         fontWeight = FontWeight.Bold,
         color = TextSecondary,
+        fontFamily = FontFamily.Monospace
+      )
+    }
+
+    Spacer(modifier = Modifier.height(3.dp))
+
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+      Text(
+        text = "DEV PWR",
+        fontSize = 7.5.sp,
+        fontWeight = FontWeight.Bold,
+        color = TextTertiary,
+        fontFamily = FontFamily.Monospace
+      )
+      Text(
+        text = "$deviceBatteryPercent%",
+        fontSize = 8.sp,
+        fontWeight = FontWeight.Black,
+        color = if (isDeviceBatteryLow) RedlineRed else NeonCyan,
         fontFamily = FontFamily.Monospace
       )
     }

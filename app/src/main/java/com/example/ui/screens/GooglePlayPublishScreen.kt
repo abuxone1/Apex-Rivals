@@ -122,12 +122,19 @@ import kotlinx.coroutines.launch
 
 object GooglePlayListingData {
   const val APPLICATION_ID = "com.aistudio.apexrivals.tr8x"
-  const val VERSION_NAME = "6.0"
-  const val VERSION_CODE = 6
+  const val VERSION_NAME = "7.0.0"
+  const val VERSION_CODE = 7
   const val MIN_SDK = 24
   const val TARGET_SDK = 36
   const val APP_TITLE = "Apex Rivals"
   const val SHORT_DESCRIPTION = "60Hz esports racing telemetry, live cockpit HUD, AI coach & global leaderboards."
+
+  const val WHATS_NEW_V7 = """What's New in v7.0.0:
+• CORNER APEX & DELTA ANALYZER: Interactive circuit map with turn-by-turn apex speeds, braking distance markers, recommended gears, and engineering advice.
+• DUAL-RUN DELTA ENGINE: Side-by-side telemetry comparison tracking time delta, speed traces, and throttle/braking overlays.
+• THEORETICAL BEST LAP CALCULATOR: Aggregates optimal S1, S2, and S3 micro-sectors to identify maximum circuit potential.
+• ADVANCED ROOM PERSISTENCE: High-performance SQLite telemetry schema for reactive lap timing and vehicle dynamics tracking.
+• ACCELERATED 60Hz PHYSICS & STABILITY FIXES: Fine-tuned tire telemetry and cross-play synchronization."""
 
   // Company, Organization & Web Details
   const val COMPANY_NAME = "Apex Dynamics Motorsport Studios Inc."
@@ -952,6 +959,69 @@ ${GooglePlayListingData.FULL_DESCRIPTION}"""
           fontSize = 10.sp,
           lineHeight = 15.sp,
           color = TextSecondary
+        )
+      }
+    }
+
+    // What's New in v7.0.0 (Release Notes)
+    Card(
+      colors = CardDefaults.cardColors(containerColor = CarbonSurface),
+      shape = RoundedCornerShape(8.dp),
+      border = androidx.compose.foundation.BorderStroke(1.dp, NeonAmber.copy(alpha = 0.5f)),
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      Column(modifier = Modifier.padding(14.dp)) {
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+              imageVector = Icons.Default.CheckCircle,
+              contentDescription = null,
+              tint = NeonAmber,
+              modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Column {
+              Text(
+                text = "What's New in v7.0.0 (Release Notes)",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary
+              )
+              Text(
+                text = "Paste into Google Play Console -> Production -> Release Notes",
+                fontSize = 9.sp,
+                color = TextSecondary
+              )
+            }
+          }
+
+          TextButton(
+            onClick = { onCopy("What's New in v7.0.0", GooglePlayListingData.WHATS_NEW_V7) },
+            modifier = Modifier.testTag("copy_whats_new_btn")
+          ) {
+            Icon(
+              imageVector = Icons.Default.ContentCopy,
+              contentDescription = "Copy Release Notes",
+              tint = NeonAmber,
+              modifier = Modifier.size(13.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text("Copy", color = NeonAmber, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+          }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+          text = GooglePlayListingData.WHATS_NEW_V7,
+          fontSize = 10.5.sp,
+          lineHeight = 15.sp,
+          color = TextSecondary,
+          fontFamily = FontFamily.Monospace
         )
       }
     }

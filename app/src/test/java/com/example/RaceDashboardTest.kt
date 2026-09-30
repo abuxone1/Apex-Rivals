@@ -105,4 +105,42 @@ class RaceDashboardTest {
     composeTestRule.onNodeWithText("3").assertIsDisplayed()
     composeTestRule.onNodeWithTag("dashboard_demo_toggle").assertIsDisplayed()
   }
+
+  @Test
+  fun `race dashboard renders device battery indicator badge`() {
+    composeTestRule.setContent {
+      RaceDashboard(
+        deviceBatteryLevel = 75,
+        showDeviceBattery = true
+      )
+    }
+
+    composeTestRule.onNodeWithTag("dashboard_battery_badge").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("low_battery_percentage_text", useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  @Test
+  fun `race dashboard displays low battery warning banner when battery level is low and supports dismiss`() {
+    composeTestRule.setContent {
+      RaceDashboard(
+        deviceBatteryLevel = 14, // Low battery (<= 20%)
+        showDeviceBattery = true
+      )
+    }
+
+    // Badge indicates LOW status
+    composeTestRule.onNodeWithTag("dashboard_battery_badge").assertIsDisplayed()
+    composeTestRule.onNodeWithText("LOW", useUnmergedTree = true).assertIsDisplayed()
+
+    // Warning banner is displayed
+    composeTestRule.onNodeWithTag("low_battery_banner").assertIsDisplayed()
+    composeTestRule.onNodeWithText("LOW BATTERY ALERT (14%)", useUnmergedTree = true).assertIsDisplayed()
+
+    // Dismiss banner
+    composeTestRule.onNodeWithTag("low_battery_dismiss_btn").performClick()
+    composeTestRule.waitForIdle()
+
+    // Banner should be dismissed
+    composeTestRule.onNodeWithTag("low_battery_banner").assertDoesNotExist()
+  }
 }

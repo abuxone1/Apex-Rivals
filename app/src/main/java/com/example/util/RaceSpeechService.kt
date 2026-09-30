@@ -215,6 +215,23 @@ class RaceSpeechService private constructor(context: Context) {
     speak("Race engineer radio check. Comms loud and clear. All telemetry systems active.", flush = true)
   }
 
+  private var lastBatteryWarningTimestamp: Long = 0L
+
+  /**
+   * Delivers audio radio warning when device battery drops to low or critical levels.
+   */
+  fun announceBatteryWarning(batteryLevelPercent: Int, isCritical: Boolean) {
+    val now = System.currentTimeMillis()
+    if (now - lastBatteryWarningTimestamp < 45_000L) return // 45s cooldown
+    lastBatteryWarningTimestamp = now
+    val message = if (isCritical) {
+      "Critical pit alert! Device power at $batteryLevelPercent percent. Plug in power now."
+    } else {
+      "Telemetry notice. Device battery running low at $batteryLevelPercent percent."
+    }
+    speak(message, flush = false)
+  }
+
   /**
    * Toggle all voice announcements on/off.
    */

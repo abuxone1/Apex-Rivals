@@ -63,6 +63,7 @@ import com.example.ui.screens.LiveTelemetryScreen
 import com.example.ui.screens.MultiplayerScreen
 import com.example.ui.screens.PerformanceMetricsScreen
 import com.example.ui.screens.ReplayEngineScreen
+import com.example.ui.screens.TelemetryAnalyzerScreen
 import com.example.ui.screens.UserProfileScreen
 import com.example.ui.theme.ApexGreen
 import com.example.ui.theme.CarbonBlack
@@ -172,6 +173,34 @@ fun ApexRivalsApp(
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Black,
                     color = CarbonBlack
+                  )
+                }
+              }
+
+              Spacer(modifier = Modifier.width(6.dp))
+
+              Box(
+                modifier = Modifier
+                  .clip(RoundedCornerShape(6.dp))
+                  .background(if (currentScreen == Screen.TelemetryAnalyzer) NeonAmber else CarbonSurfaceVariant)
+                  .border(1.dp, if (currentScreen == Screen.TelemetryAnalyzer) NeonAmber else CarbonBorder, RoundedCornerShape(6.dp))
+                  .clickable { currentScreen = Screen.TelemetryAnalyzer }
+                  .padding(horizontal = 7.dp, vertical = 4.dp)
+                  .testTag("telemetry_analyzer_quick_button")
+              ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  Icon(
+                    imageVector = Icons.Default.Speed,
+                    contentDescription = "Corner & Delta Analyzer",
+                    tint = if (currentScreen == Screen.TelemetryAnalyzer) CarbonBlack else NeonAmber,
+                    modifier = Modifier.size(11.dp)
+                  )
+                  Spacer(modifier = Modifier.width(3.dp))
+                  Text(
+                    text = "DELTA",
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Black,
+                    color = if (currentScreen == Screen.TelemetryAnalyzer) CarbonBlack else TextPrimary
                   )
                 }
               }
@@ -353,7 +382,8 @@ fun ApexRivalsApp(
           Screen.LiveDrive -> LiveTelemetryScreen(
             uiState = uiState,
             viewModel = viewModel,
-            onPlayGame = { currentScreen = Screen.RacingGame }
+            onPlayGame = { currentScreen = Screen.RacingGame },
+            onNavigateToAnalyzer = { currentScreen = Screen.TelemetryAnalyzer }
           )
           Screen.RacingGame -> RacingGameScreen(
             vehicle = uiState.activeVehicle,
@@ -382,7 +412,13 @@ fun ApexRivalsApp(
             onNavigateToReplay = { currentScreen = Screen.Replay }
           )
           Screen.PerformanceHistory -> PerformanceMetricsScreen(
+            onNavigateToAnalyzer = { currentScreen = Screen.TelemetryAnalyzer },
             onNavigateBack = { currentScreen = Screen.Leaderboards }
+          )
+          Screen.TelemetryAnalyzer -> TelemetryAnalyzerScreen(
+            uiState = uiState,
+            viewModel = viewModel,
+            onNavigateBack = { currentScreen = Screen.LiveDrive }
           )
           Screen.Multiplayer -> MultiplayerScreen(
             uiState = uiState,

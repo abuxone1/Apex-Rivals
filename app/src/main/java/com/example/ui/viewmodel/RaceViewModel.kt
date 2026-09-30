@@ -22,6 +22,7 @@ import com.example.data.gemini.LiveVoiceMessage
 import com.example.data.gemini.LyriaMusicModel
 import com.example.data.gemini.VeoAspectRatio
 import com.example.data.local.AppDatabase
+import com.example.data.local.RacePerformanceMetric
 import com.example.data.local.RaceResult
 import com.example.data.local.RaceSessionEntity
 import com.example.data.local.TelemetryConverters
@@ -137,7 +138,7 @@ class RaceViewModel(application: Application) : AndroidViewModel(application) {
 
   init {
     val db = AppDatabase.getDatabase(application)
-    repository = RaceRepository(db.raceDao(), db.raceResultDao())
+    repository = RaceRepository(db.raceDao(), db.raceResultDao(), db.racePerformanceMetricDao())
     physicsEngine = RacingPhysicsEngine(AVAILABLE_VEHICLES[0], AVAILABLE_TRACKS[0])
 
     val rooms = repository.getMultiplayerRooms()
@@ -485,6 +486,24 @@ class RaceViewModel(application: Application) : AndroidViewModel(application) {
         topSpeedKmh = metrics.topSpeedKmh
       )
       repository.saveRaceResult(raceResult)
+
+      val performanceMetric = RacePerformanceMetric(
+        trackName = metrics.activeTrack.name,
+        lapTimeMs = lapTime,
+        vehicleSpeed = metrics.topSpeedKmh,
+        vehicleName = metrics.activeVehicle.name,
+        driverName = "Apex Driver",
+        lapNumber = metrics.currentLap,
+        topSpeedKmh = metrics.topSpeedKmh,
+        avgSpeedKmh = if (metrics.topSpeedKmh > 0) metrics.topSpeedKmh * 0.78f else metrics.speedKmh,
+        peakAccelerationG = metrics.longitudinalG,
+        maxLateralG = metrics.peakLateralG,
+        sector1Ms = metrics.sector1TimeMs ?: 0L,
+        sector2Ms = metrics.sector2TimeMs ?: 0L,
+        sector3Ms = metrics.sector3TimeMs ?: 0L,
+        raceMode = "Grand Prix"
+      )
+      repository.savePerformanceMetric(performanceMetric)
       // Sync to Firebase Firestore cloud
       firebaseService.syncLapToFirestore(raceResult)
     }

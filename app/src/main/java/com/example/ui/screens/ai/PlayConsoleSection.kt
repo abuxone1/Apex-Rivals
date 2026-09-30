@@ -72,8 +72,8 @@ fun PlayConsoleSection(
     ConsoleRequirementItem(
       section = "App Identity & Version",
       field = "Version Code & Name",
-      value = "versionCode 6 (versionName 6.0)",
-      notes = "Incremented release artifact version"
+      value = "versionCode 7 (versionName 7.0.0)",
+      notes = "Incremented release artifact version for Play Store publication"
     ),
     ConsoleRequirementItem(
       section = "App Identity & Version",

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,6 +54,7 @@ import androidx.compose.ui.platform.testTag
 import com.example.ui.components.RaceEngineerAudioCard
 import com.example.ui.components.RaceTimer
 import com.example.ui.components.ShareLapTimeDialog
+import com.example.ui.components.rememberDeviceBatteryState
 import com.example.util.RaceSpeechService
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.LaunchedEffect
@@ -91,6 +93,7 @@ fun LiveTelemetryScreen(
   uiState: RaceUiState,
   viewModel: RaceViewModel,
   onPlayGame: () -> Unit = {},
+  onNavigateToAnalyzer: () -> Unit = {},
   modifier: Modifier = Modifier
 ) {
   var showShareDialog by remember { mutableStateOf(false) }
@@ -101,6 +104,17 @@ fun LiveTelemetryScreen(
 
   val context = LocalContext.current
   val speechService = remember { RaceSpeechService.getInstance(context) }
+  val deviceBatteryState = rememberDeviceBatteryState()
+
+  // Notify driver via engineer radio if device battery drops into low power during race
+  LaunchedEffect(deviceBatteryState.isLow, deviceBatteryState.isCritical, deviceBatteryState.levelPercent) {
+    if (deviceBatteryState.isLow || deviceBatteryState.isCritical) {
+      speechService.announceBatteryWarning(
+        batteryLevelPercent = deviceBatteryState.levelPercent,
+        isCritical = deviceBatteryState.isCritical
+      )
+    }
+  }
 
   // Monitor vehicle speed in real-time to trigger voice speed alerts
   LaunchedEffect(metrics.speedKmh) {
@@ -244,6 +258,101 @@ fun LiveTelemetryScreen(
             Text(
               text = "RACE",
               fontSize = 11.sp,
+              fontWeight = FontWeight.Black,
+              color = CarbonBlack
+            )
+          }
+        }
+      }
+    }
+
+    item {
+      // Telemetry Corner & Delta Analyzer Banner Card
+      Card(
+        colors = CardDefaults.cardColors(containerColor = CarbonSurface),
+        shape = RoundedCornerShape(12.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, NeonAmber.copy(alpha = 0.7f)),
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable(onClick = onNavigateToAnalyzer)
+          .testTag("open_telemetry_analyzer_card")
+      ) {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+          ) {
+            Box(
+              modifier = Modifier
+                .size(42.dp)
+                .clip(CircleShape)
+                .background(NeonAmber.copy(alpha = 0.15f))
+                .border(1.5.dp, NeonAmber, CircleShape),
+              contentAlignment = Alignment.Center
+            ) {
+              Icon(
+                imageVector = Icons.Default.Tune,
+                contentDescription = "Corner & Delta Analyzer",
+                tint = NeonAmber,
+                modifier = Modifier.size(22.dp)
+              )
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column {
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                  text = "CORNER APEX & DELTA ANALYZER",
+                  fontSize = 12.sp,
+                  fontWeight = FontWeight.Black,
+                  color = TextPrimary,
+                  letterSpacing = 0.5.sp
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                  modifier = Modifier
+                    .clip(RoundedCornerShape(3.dp))
+                    .background(NeonAmber.copy(alpha = 0.2f))
+                    .padding(horizontal = 4.dp, vertical = 1.dp)
+                ) {
+                  Text(
+                    text = "NEW v7.0",
+                    fontSize = 7.5.sp,
+                    fontWeight = FontWeight.Black,
+                    color = NeonAmber,
+                    fontFamily = FontFamily.Monospace
+                  )
+                }
+              }
+              Spacer(modifier = Modifier.height(2.dp))
+              Text(
+                text = "Turn-by-turn apex speeds, braking zones, dual-run comparison & theoretical best lap",
+                fontSize = 9.5.sp,
+                color = TextSecondary,
+                lineHeight = 13.sp
+              )
+            }
+          }
+
+          Spacer(modifier = Modifier.width(8.dp))
+
+          Button(
+            onClick = onNavigateToAnalyzer,
+            colors = ButtonDefaults.buttonColors(containerColor = NeonAmber),
+            shape = RoundedCornerShape(8.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+            modifier = Modifier.testTag("open_analyzer_button")
+          ) {
+            Text(
+              text = "ANALYZE",
+              fontSize = 10.sp,
               fontWeight = FontWeight.Black,
               color = CarbonBlack
             )

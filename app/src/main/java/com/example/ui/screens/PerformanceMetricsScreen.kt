@@ -57,6 +57,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ui.components.RacePerformanceTelemetryPanel
+import com.example.ui.viewmodel.RacePerformanceViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -117,6 +120,8 @@ val TAG_FILTER_PRESETS = listOf(
 @Composable
 fun PerformanceMetricsScreen(
   modifier: Modifier = Modifier,
+  telemetryViewModel: RacePerformanceViewModel = viewModel(),
+  onNavigateToAnalyzer: () -> Unit = {},
   onNavigateBack: () -> Unit = {}
 ) {
   val context = LocalContext.current
@@ -321,6 +326,30 @@ fun PerformanceMetricsScreen(
       }
 
       Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        // Corner & Delta Analyzer Button
+        Button(
+          onClick = onNavigateToAnalyzer,
+          colors = ButtonDefaults.buttonColors(containerColor = NeonAmber),
+          shape = RoundedCornerShape(8.dp),
+          contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+          modifier = Modifier.testTag("nav_to_analyzer_btn")
+        ) {
+          Icon(
+            imageVector = Icons.Default.Tune,
+            contentDescription = null,
+            tint = CarbonBlack,
+            modifier = Modifier.size(14.dp)
+          )
+          Spacer(modifier = Modifier.width(4.dp))
+          Text(
+            text = "DELTA ANALYZER",
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Black,
+            color = CarbonBlack,
+            fontFamily = FontFamily.Monospace
+          )
+        }
+
         // Share Best Lap Run Button
         if (filteredMetrics.isNotEmpty()) {
           OutlinedButton(
@@ -704,6 +733,14 @@ fun PerformanceMetricsScreen(
         .testTag("performance_metrics_list"),
       verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+      // Room Database Performance Telemetry Panel (ViewModel + Room Schema)
+      item {
+        RacePerformanceTelemetryPanel(
+          viewModel = telemetryViewModel,
+          modifier = Modifier.padding(bottom = 6.dp)
+        )
+      }
+
       if (filteredMetrics.isNotEmpty()) {
         item {
           PerformanceMetricsRechartsChart(
