@@ -3,53 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Apex Rivals — telemetry, AI coaching, and competitive racing.">
-  <title>Apex Rivals | Competitive Racing</title>
+  <meta name="description" content="Apex Rivals racing telemetry, AI coaching, leaderboards, and esports performance insights.">
+  <title>Apex Rivals | Racing Performance</title>
   <style>
-    :root { color-scheme: dark; --bg:#0b1016; --panel:#151d27; --text:#f2f7fb; --muted:#a7b4c2; --cyan:#00e5ff; --amber:#ffb300; }
+    :root { color-scheme: dark; --bg:#0a1017; --panel:#101b28; --panel-2:#172532; --text:#f4f9ff; --muted:#afbfce; --cyan:#00e5ff; --amber:#ffbf47; --green:#7ef1c6; }
     * { box-sizing:border-box; }
-    body { margin:0; font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--text); background:radial-gradient(circle at 80% 0,#12303a 0,transparent 42%),var(--bg); }
-    main { width:min(1040px,calc(100% - 32px)); margin:auto; padding:28px 0 64px; }
-    nav { display:flex; justify-content:space-between; gap:20px; align-items:center; flex-wrap:wrap; }
-    .brand { color:var(--text); font-weight:800; letter-spacing:.08em; text-decoration:none; }
-    nav a, footer a { color:var(--cyan); text-decoration:none; }
-    .hero { padding:100px 0 80px; max-width:760px; }
-    .eyebrow { color:var(--amber); font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-    h1 { font-size:clamp(42px,8vw,78px); line-height:1; margin:16px 0 24px; }
-    h2 { margin-top:0; }
-    .hero p { color:var(--muted); font-size:1.2rem; max-width:650px; }
-    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
-    .button { display:inline-block; padding:11px 18px; border-radius:8px; background:var(--cyan); color:#001116; font-weight:750; text-decoration:none; }
-    .button.secondary { background:transparent; color:var(--cyan); border:1px solid #2b7380; }
-    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
-    .card { background:color-mix(in srgb,var(--panel) 90%,transparent); border:1px solid #273544; border-radius:14px; padding:22px; }
-    .card p, footer { color:var(--muted); }
-    footer { border-top:1px solid #273544; margin-top:70px; padding-top:22px; font-size:.9rem; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:radial-gradient(circle at top right,#133b4a 0,transparent 38%), var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+    a { color:var(--cyan); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .container { width:min(1040px, calc(100% - 30px)); margin:0 auto; }
+    nav { display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; padding:18px 0; }
+    .brand { font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:var(--text); }
+    .nav-links { display:flex; gap:16px; flex-wrap:wrap; color:var(--muted); }
+    .hero { padding:74px 0 56px; }
+    h1 { margin:0 0 16px; font-size:clamp(2.8rem, 7vw, 5.4rem); line-height:0.95; letter-spacing:-.06em; }
+    .eyebrow { display:inline-block; text-transform:uppercase; letter-spacing:.12em; font-size:.76rem; font-weight:800; color:var(--amber); }
+    .lead { max-width:700px; font-size:1.18rem; color:var(--muted); }
+    .cta-row { display:flex; gap:14px; flex-wrap:wrap; margin-top:28px; }
+    .button { display:inline-block; padding:12px 18px; border-radius:10px; border:1px solid transparent; font-weight:700; }
+    .button.primary { background:var(--cyan); color:#031317; }
+    .button.secondary { border-color:#274b5e; color:var(--text); background:rgba(255,255,255,0.02); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:12px; }
+    .card { background:linear-gradient(180deg, rgba(19,31,41,.8), rgba(12,18,25,.9)); border:1px solid #21313e; border-radius:16px; padding:22px; }
+    .card h2 { margin:0 0 10px; font-size:1.18rem; }
+    .card p { margin:0; color:var(--muted); }
+    footer { padding:28px 0 40px; color:var(--muted); border-top:1px solid #21313e; margin-top:40px; }
+    @media (max-width: 520px) { nav { justify-content:center; } }
   </style>
 </head>
 <body>
-  <main>
+  <div class="container">
     <nav aria-label="Primary navigation">
-      <a class="brand" href="./">APEX RIVALS</a>
-      <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="data-deletion.html">Data deletion</a></span>
+      <a href="./" class="brand">Apex Rivals</a>
+      <div class="nav-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/data-deletion/">Data deletion</a>
+        <a href="/account-deletion/">Account deletion</a>
+      </div>
     </nav>
-    <section class="hero">
+
+    <header class="hero">
       <div class="eyebrow">Built for racers</div>
-      <h1>Turn every lap into an advantage.</h1>
-      <p>Apex Rivals combines high-frequency racing telemetry, an AI race coach, replay analysis, and global competition in one focused racing companion.</p>
-      <div class="actions">
-        <a class="button" href="privacy.html">View privacy policy</a>
+      <h1>Turn every lap into a measurable advantage.</h1>
+      <p class="lead">Apex Rivals combines telemetry, AI race coaching, split comparisons, and competitive rankings to help drivers understand performance and improve faster.</p>
+      <div class="cta-row">
+        <a class="button primary" href="/privacy/">View privacy policy</a>
         <a class="button secondary" href="mailto:abux.one@gmail.com">Contact support</a>
       </div>
+    </header>
+
+    <section class="grid" aria-label="Apex Rivals features">
+      <article class="card">
+        <h2>Live telemetry</h2>
+        <p>Track speed, RPM, throttle, braking, G-force, and sector deltas in real time.</p>
+      </article>
+      <article class="card">
+        <h2>AI race engineer</h2>
+        <p>Get actionable feedback on braking zones, tire wear, and setup changes.</p>
+      </article>
+      <article class="card">
+        <h2>Competitive racing</h2>
+        <p>Compare laps, review ghosts, and climb leaderboards across your favorite tracks.</p>
+      </article>
     </section>
-    <section class="cards" aria-label="Apex Rivals features">
-      <article class="card"><h2>Live telemetry</h2><p>Monitor speed, RPM, throttle, braking, G-force, tire temperatures, and split deltas.</p></article>
-      <article class="card"><h2>AI race coach</h2><p>Get practical feedback on braking points, setup choices, tire wear, and corner exits.</p></article>
-      <article class="card"><h2>Compete globally</h2><p>Compare laps, share ghosts, and climb leaderboards across your favorite circuits.</p></article>
-    </section>
+
     <footer>
-      © 2026 Apex Rivals · <a href="mailto:abux.one@gmail.com">abux.one@gmail.com</a> · <a href="account-deletion.html">Account deletion</a>
+      © 2026 Apex Rivals · <a href="mailto:abux.one@gmail.com">abux.one@gmail.com</a>
     </footer>
-  </main>
+  </div>
 </body>
 </html>
